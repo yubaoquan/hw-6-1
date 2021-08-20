@@ -1,0 +1,53 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/logs/logs",
+        "pages/me/me",
+        "pages/profile/profile",
+        "pages/news/news"
+    ],
+    "subpackages": [
+        {
+            "root": "news",
+            "pages": [
+                "subpages/news/detail"
+            ]
+        }
+    ],
+    "tabBar": {
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "Home",
+                "iconPath": "static/home.png",
+                "selectedIconPath": "static/home-active.png" 
+            },
+            {
+                "pagePath": "pages/news/news",
+                "text": "News",
+                "iconPath": "static/book.png",
+                "selectedIconPath": "static/book-active.png"
+            }, 
+            {
+                "pagePath": "pages/me/me",
+                "text": "aaa",
+                "iconPath": "static/list.png",
+                "selectedIconPath": "static/list-active.png"
+            },
+            {
+                "pagePath": "pages/profile/profile",
+                "text": "Profile",
+                "iconPath": "static/profile.png",
+                "selectedIconPath": "static/profile-active.png"
+            }
+        ]
+    },
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#F4501C",
+        "navigationBarTitleText": "每日新闻",
+        "navigationBarTextStyle": "white"
+    },
+    "style": "v2",
+    "sitemapLocation": "sitemap.json"
+}

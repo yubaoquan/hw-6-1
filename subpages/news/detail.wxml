@@ -1,0 +1,2 @@
+<!--subpages/news/detail.wxml-->
+<text>这是新闻详情页 新闻ID: {{ id }}</text>

@@ -1,0 +1,6 @@
+<!--pages/news/news.wxml-->
+<text>这是新闻页</text>
+
+<view wx:for="{{news}}" wx:for-item="item" class="news-item" wx:key="title">
+    <navigator url="/subpages/news/detail?id=1">{{item.title}}</navigator>
+</view>
