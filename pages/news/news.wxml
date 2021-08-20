@@ -1,6 +1,50 @@
 <!--pages/news/news.wxml-->
-<text>这是新闻页</text>
-
-<view wx:for="{{news}}" wx:for-item="item" class="news-item" wx:key="title">
-    <navigator url="/subpages/news/detail?id=1">{{item.title}}</navigator>
+<view class="tabs">
+    <text 
+        class="tab {{ item.id === category.id ? 'active' : '' }}" 
+        wx:for="{{categories}}" 
+        wx:key="id"
+        data-category="{{item}}"
+        bindtap="handleCategoryTap"
+    >{{item.title}}</text>
 </view>
+
+<view class="news-list">
+    <view wx:for="{{category.news}}" wx:for-item="item" class="news-item" wx:key="title">
+        <navigator url="/subpages/news/detail?id={{item.id}}&url={{item.url}}">
+            <block wx:if="{{item.imgs.length > 2}}">
+                <view>
+                    <text class="title-preview">{{item.title}}</text>
+                </view>
+                <view class="imgs">
+                    <image class="img-big" wx:for="{{item.imgs}}" wx:for-item="img" src="{{img}}" mode="widthFix"></image>
+                </view>
+                <view class="row2">
+                    <view class="row2-l">
+                        <text class="date">{{item.date}}</text>
+                        <text>{{item.author}}</text>
+                    </view>
+                    <image class="row2-r like" src="/static/like.png" catchtap="handleLikeClick"></image>
+                </view>
+            </block>
+            <view wx:else class="news-item2">
+                <view class="left">
+                    <view>
+                        <view>
+                            <text class="title-preview">{{item.title}}</text>
+                        </view>
+                    </view>
+                    <view class="row2">
+                        <view class="row2-l">
+                            <text class="date">{{item.date}}</text>
+                            <text>{{item.author}}</text>
+                        </view>
+                        <image class="row2-r like" src="/static/like.png" catchtap="handleLikeClick"></image>
+                    </view>
+                </view>
+                <image class="img-small" wx:for="{{item.imgs}}" wx:for-item="img" src="{{img}}" mode="heightFix"></image>
+            </view>
+        </navigator>
+    </view>
+</view>
+

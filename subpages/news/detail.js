@@ -5,15 +5,16 @@ Page({
      * 页面的初始数据
      */
     data: {
-        id: ''
+        id: '',
+        url: '',
     },
 
     /**
      * 生命周期函数--监听页面加载
      */
     onLoad: function (options) {
-        this.setData({ id: options.id })
-        this.fetchNews()
+        this.setData({ id: options.id, url: decodeURI(options.url) })
+        this.fetchNewsDetail(options.id)
     },
 
     /**
@@ -63,6 +64,10 @@ Page({
     onShareAppMessage: function () {
 
     },
+
+    fetchNewsDetail(id) {
+        console.info('获取新闻详情', id)
+    }
 
     
 })
