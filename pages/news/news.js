@@ -13,7 +13,44 @@ const categories = [
     { title: '游戏', id: 'youxi' },
     { title: '汽车', id: 'qiche' },
     { title: '健康', id: 'jiankang' },
-];
+].map(category => {
+    return {
+        ...category,
+        news: [],
+        page: 0,
+        
+    }
+});
+
+// 接口返回空数据时调试用
+const fakeData = [{
+    title: 'bb机',
+    url: 'https://www.baidu.com',
+    author: '新华社',
+    date: '2020-09-01 11:22:33',
+    imgs: [
+        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
+        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
+        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
+    ],
+}, {
+    title: 'bb机2张图',
+    url: 'https://www.baidu.com',
+    author: '新华社',
+    date: '2020-09-01 11:22:33',
+    imgs: [
+        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
+        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
+    ],
+}, {
+    title: 'bb机1张图',
+    url: 'https://www.baidu.com',
+    author: '新华社',
+    date: '2020-09-01 11:22:33',
+    imgs: [
+        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
+    ],
+}];
 
 Page({
 
@@ -21,14 +58,8 @@ Page({
      * 页面的初始数据
      */
     data: {
-        category: { id: 'top' },
-        categories: categories.map(category => {
-            return {
-                ...category,
-                news: [],
-                page: 1,
-            }
-        }),
+        category: categories[0],
+        categories,
         news: Array(20).fill(0).map((item, i) => {
             return {
                 title: `这是第${i + 1}条新闻`,
@@ -78,13 +109,26 @@ Page({
      */
     onPullDownRefresh: function () {
         console.info('下拉刷新');
+        this.updateCategory({ page: 0, news: [] })
+        this.fetchNews();
+
+    },
+
+    updateCategory(data) {
+        const { category, categories } = this.data;
+        Object.assign(category, data);
+
+        categories.forEach(item => {
+            if (item.id === category.id) Object.assign(item, data);
+        });
+        this.setData({ category, categories });
     },
 
     /**
      * 页面上拉触底事件的处理函数
      */
     onReachBottom: function () {
-        console.info('触底了')
+        this.fetchNews();
     },
 
     /**
@@ -94,13 +138,13 @@ Page({
 
     },
     fetchNews() {
-        console.info('fetch news...', this)
+        const currentPage = this.data.category.page || 0
         wx.request({
             url: 'http://v.juhe.cn/toutiao/index',
             data: {
                 key: 'dfb93ade00c180409254236a492998bc',
                 type: this.data.category.id,
-                page: this.data.category.page || 1,
+                page: currentPage + 1,
                 page_size: 10,
                 is_filter: 1,
             },
@@ -120,39 +164,11 @@ Page({
                     if (item.thumbnail_pic_s03) newsItem.imgs.push(item.thumbnail_pic_s03);
 
                     return newsItem;
-                }) || [{
-                    title: 'bb机',
-                    url: 'https://www.baidu.com',
-                    author: '新华社',
-                    date: '2020-09-01 11:22:33',
-                    imgs: [
-                        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
-                        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
-                        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
-                    ]
-                }, {
-                    title: 'bb机2张图',
-                    url: 'https://www.baidu.com',
-                    author: '新华社',
-                    date: '2020-09-01 11:22:33',
-                    imgs: [
-                        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
-                        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
-                    ]
-                }, {
-                    title: 'bb机1张图',
-                    url: 'https://www.baidu.com',
-                    author: '新华社',
-                    date: '2020-09-01 11:22:33',
-                    imgs: [
-                        'http://wx3.sinaimg.cn/mw600/6f496928ly1gt82pxom24j20iz0cpwgh.jpg',
-                    ]
-                }];
+                }) || fakeData;
 
-                const { categories } = this.data;
-                const category = categories.find(item => item.id === this.data.category.id);
-                console.info(news);
+                const { categories, category } = this.data;
                 category.news.push(...news);
+                category.page = currentPage + 1;
                 this.setData({ categories, category });
             }
         })
@@ -160,14 +176,20 @@ Page({
     handleCategoryTap(e) {
         const { id } = e.currentTarget.dataset.category;
         const category = this.data.categories.find(item => item.id === id);
-        console.info(category);
         this.setData({ category });
+        console.info(category)
         if (!category.news.length) this.fetchNews();
+        else wx.pageScrollTo({
+          scrollTop: category.scrollTop || 0,
+        });
     },
     handleLikeClick(e) {
-        
         wx.showToast({
           title: '喜欢这条',
-        })
+        });
+    },
+    onPageScroll(e) {
+        const { scrollTop } = e;
+        this.updateCategory({ scrollTop });
     }
 })

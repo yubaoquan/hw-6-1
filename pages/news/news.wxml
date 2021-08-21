@@ -9,7 +9,7 @@
     >{{item.title}}</text>
 </view>
 
-<view class="news-list">
+<view class="news-list" bindscroll="handlePageScroll">
     <view wx:for="{{category.news}}" wx:for-item="item" class="news-item" wx:key="title">
         <navigator url="/subpages/news/detail?id={{item.id}}&url={{item.url}}">
             <block wx:if="{{item.imgs.length > 2}}">
